@@ -87,6 +87,7 @@ const schema = a.schema({
     ratings: a.hasMany("UserRating", "userId"),
     listings: a.hasMany("Listing", "userId"),
     wishlist: a.hasOne("Wishlist", "userId"),
+    notifications: a.hasMany("Notifications", "userId"),
     cart: a.hasOne("Cart", "userId")
   }).authorization(allow => [
     allow.authenticated().to(['read']),
