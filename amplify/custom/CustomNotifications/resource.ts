@@ -28,7 +28,7 @@ export type Message = {
             environment: {
                 TOPIC_ARN: this.topic.topicArn
             },
-            runtime: Runtime.NODEJS_18_X
+            runtime: Runtime.NODEJS_16_X
         });
 
         this.topic.grantPublish(publisher);
