@@ -52,7 +52,7 @@ const schema = a.schema({
     bookId: a.id(),
     libraryId: a.id().required(),
     book: a.belongsTo("Book", "bookId"),
-    library: a.belongsTo("UserLibrary", "libraryId")
+    userLibraryRef: a.belongsTo("UserLibrary", "libraryId") // Cambio realizado aquí
   }).authorization(allow => [
     allow.authenticated().to(['read']),
     allow.owner().to(['create', 'update', 'delete'])
@@ -82,10 +82,11 @@ const schema = a.schema({
     lastName: a.string(),
     address: a.string(),
     phone: a.string(),
-    library: a.hasOne("UserLibrary", "userId"),
+    userLibraryRef: a.hasOne("UserLibrary", "userId"),
     ratingsReceived: a.hasMany("UserRating", "ratedId"),
     ratings: a.hasMany("UserRating", "userId"),
     listings: a.hasMany("Listing", "userId"),
+    notifications: a.hasMany("Notifications", "userId"),
     wishlist: a.hasOne("Wishlist", "userId"),
     cart: a.hasOne("Cart", "userId")
   }).authorization(allow => [
@@ -166,7 +167,6 @@ export const data = defineData({
   schema,
   authorizationModes: {
     defaultAuthorizationMode: "userPool",
-    // API Key is used for public access
     apiKeyAuthorizationMode: {
       expiresInDays: 30,
     },
