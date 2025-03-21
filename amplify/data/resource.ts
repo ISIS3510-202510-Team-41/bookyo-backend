@@ -1,4 +1,6 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { read } from "node:fs";
+import { title } from "node:process";
 
 const schema = a.schema({
   Wishlist: a.model({
@@ -87,7 +89,6 @@ const schema = a.schema({
     ratings: a.hasMany("UserRating", "userId"),
     listings: a.hasMany("Listing", "userId"),
     wishlist: a.hasOne("Wishlist", "userId"),
-    notifications: a.hasMany("Notifications", "userId"),
     cart: a.hasOne("Cart", "userId")
   }).authorization(allow => [
     allow.authenticated().to(['read']),
@@ -106,18 +107,6 @@ const schema = a.schema({
     allow.authenticated().to(['read']),
     allow.owner().to(['create', 'update', 'delete'])
   ]),
-
-  Notifications: a.model({
-    id: a.id().required(),
-    userId: a.string().required(),
-    user: a.belongsTo("User", "userId"),
-    message: a.string().required(),
-    read: a.boolean().required(),
-
-  }).authorization(allow => [
-    allow.owner().to(['update'])
-  ]),
-
   Category: a.model({
     id: a.id().required(),
     name: a.string().required(),
@@ -153,6 +142,14 @@ const schema = a.schema({
     allow.authenticated().to(['read']),
     allow.owner().to(['create', 'update', 'delete'])
   ]),
+  Notification: a.model({
+    id: a.id().required(),
+    title: a.string().required(),
+    body: a.string().required(),
+    recipient: a.string().required(),
+    read: a.boolean().required(),
+    type: a.enum(["NEW_BOOK", "BOOK_SOLD", "SYSTEM_NOTIFICATION"]),
+  }).authorization(allow => [allow.authenticated().to(['read', 'delete'])]),
   Cart: a.model({
     id: a.id().required(),
     userId: a.string().required(),

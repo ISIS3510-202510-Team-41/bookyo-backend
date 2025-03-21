@@ -6,6 +6,8 @@ import { CfnApp } from "aws-cdk-lib/aws-pinpoint";
 import { Stack } from "aws-cdk-lib/core";
 import { CfnMap } from 'aws-cdk-lib/aws-location';
 import { storage } from './storage/resource';
+import { Construct } from 'constructs';
+import { CustomNotifications } from './custom/CustomNotifications/resource';
 
 const backend = defineBackend({
   auth,
@@ -97,4 +99,13 @@ backend.addOutput({
       default: map.mapName,
     },
   },
+});
+
+const customNotifications = new CustomNotifications(backend.createStack('CustomNotifications'), 'CustomNotifications');
+
+backend.addOutput({
+  custom: {
+    topicArn: customNotifications.topic.topicArn,
+    topicName: customNotifications.topic.topicName 
+  }
 });
