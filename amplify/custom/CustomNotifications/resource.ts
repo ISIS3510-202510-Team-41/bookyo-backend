@@ -1,39 +1,34 @@
-import * as sns from '@aws-cdk/aws-sns';
+import { Topic } from 'aws-cdk-lib/aws-sns';
 import { Construct } from 'constructs';
 import * as url from 'node:url';
-import { Runtime } from '@aws-cdk/aws-lambda';
-import * as lambda from '@aws-cdk/aws-lambda-nodejs';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
-
-
-//SNS configuration
 export type Message = {
-    title: string;
-    body: string;
-    recipient: string;
-    type: 'NEW_BOOK' | 'BOOK_SOLD' | 'SYSTEM_NOTIFICATION';
-  }
+  title: string;
+  body: string;
+  recipient: string;
+  type: 'NEW_BOOK' | 'BOOK_SOLD' | 'SYSTEM_NOTIFICATION';
+}
+
+export class CustomNotifications extends Construct {
+  public readonly topic: Topic;
+
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
   
-  export class CustomNotifications extends Construct {
-    public readonly topic: sns.Topic;
+    this.topic = new Topic(this, 'NotificationTopic');
 
-    constructor(scope: Construct, id: string) {
-        super(scope, id);
-    
-        this.topic = new sns.Topic(this, 'NotificationTopic')
+    // Lambda function
+    const publisher = new NodejsFunction(this, 'Publisher', {
+      entry: url.fileURLToPath(new URL('publisher.ts', import.meta.url)),
+      environment: {
+        TOPIC_ARN: this.topic.topicArn
+      },
+      runtime: Runtime.NODEJS_18_X
+    });
 
-        //Lambda function
-        const publisher = new lambda.NodejsFunction(this, 'Publisher', {
-            entry: url.fileURLToPath(new URL('publisher.ts', import.meta.url)),
-            environment: {
-                TOPIC_ARN: this.topic.topicArn
-            },
-            runtime: Runtime.NODEJS_16_X
-        });
-
-        this.topic.grantPublish(publisher);
-
-
-    }
-  
+    // Grant publish permissions to the lambda function
+    this.topic.grantPublish(publisher);
   }
+}

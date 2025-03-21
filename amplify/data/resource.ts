@@ -1,6 +1,4 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-import { read } from "node:fs";
-import { title } from "node:process";
 
 const schema = a.schema({
   Wishlist: a.model({
