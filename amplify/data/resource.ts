@@ -86,7 +86,7 @@ const schema = a.schema({
     ratingsReceived: a.hasMany("UserRating", "ratedId"),
     ratings: a.hasMany("UserRating", "userId"),
     listings: a.hasMany("Listing", "userId"),
-    notifications: a.hasMany("Notifications", "userId"),
+    notifications: a.hasMany("Notification", "userId"),
     wishlist: a.hasOne("Wishlist", "userId"),
     cart: a.hasOne("Cart", "userId")
   }).authorization(allow => [
