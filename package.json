@@ -24,7 +24,6 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
-    "@aws-amplify/amplify-appsync-simulator": "^2.16.11",
     "aws-amplify": "^6.13.3",
     "aws-lambda": "^1.0.7",
     "graphql": "^15.10.1",
