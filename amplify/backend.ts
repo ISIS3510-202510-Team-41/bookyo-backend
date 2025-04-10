@@ -7,7 +7,7 @@ import { Stack } from "aws-cdk-lib/core";
 import { CfnMap } from 'aws-cdk-lib/aws-location';
 import { storage } from './storage/resource';
 import { Construct } from 'constructs';
-import { CustomNotifications } from './custom/CustomNotifications/resource';
+import { NotificationSystem } from './custom/NotificationSystem/resource';
 
 const backend = defineBackend({
   auth,
@@ -15,15 +15,15 @@ const backend = defineBackend({
   storage
 });
 
-
+// Analytics Stack
 const analyticsStack = backend.createStack("analytics-stack");
 
-// create a Pinpoint app
+// Create a Pinpoint app
 const pinpoint = new CfnApp(analyticsStack, "Pinpoint", {
   name: "bookyo-pinpont",
 });
 
-// create an IAM policy to allow interacting with Pinpoint
+// Create an IAM policy to allow interacting with Pinpoint
 const pinpointPolicy = new Policy(analyticsStack, "PinpointPolicy", {
   policyName: "PinpointPolicy",
   statements: [
@@ -34,11 +34,11 @@ const pinpointPolicy = new Policy(analyticsStack, "PinpointPolicy", {
   ],
 });
 
-// apply the policy to the authenticated and unauthenticated roles
+// Apply the policy to the authenticated and unauthenticated roles
 backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(pinpointPolicy);
 backend.auth.resources.unauthenticatedUserIamRole.attachInlinePolicy(pinpointPolicy);
 
-// patch the custom Pinpoint resource to the expected output configuration
+// Patch the custom Pinpoint resource to the expected output configuration
 backend.addOutput({
   analytics: {
     amazon_pinpoint: {
@@ -48,10 +48,10 @@ backend.addOutput({
   },
 });
 
-
+// Geo Stack
 const geoStack = backend.createStack("geo-stack");
 
-// create a location services map
+// Create a location services map
 const map = new CfnMap(geoStack, "Map", {
   mapName: "bookyo-map",
   description: "Map",
@@ -67,7 +67,7 @@ const map = new CfnMap(geoStack, "Map", {
   ],
 });
 
-// create an IAM policy to allow interacting with geo resource
+// Create an IAM policy to allow interacting with geo resource
 const myGeoPolicy = new Policy(geoStack, "GeoPolicy", {
   policyName: "bookyo-geo-policy",
   statements: [
@@ -83,7 +83,7 @@ const myGeoPolicy = new Policy(geoStack, "GeoPolicy", {
   ],
 });
 
-// apply the policy to the authenticated and unauthenticated roles
+// Apply the policy to the authenticated and unauthenticated roles
 backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(myGeoPolicy);
 backend.auth.resources.unauthenticatedUserIamRole.attachInlinePolicy(myGeoPolicy);
 
@@ -101,11 +101,22 @@ backend.addOutput({
   },
 });
 
-const customNotifications = new CustomNotifications(backend.createStack('CustomNotifications'), 'CustomNotifications');
+// Notification System
+const notificationSystem = new NotificationSystem(
+  backend.createStack('NotificationSystem'), 
+  'NotificationSystem',
+  {
+    apiId: backend.data.resources.graphqlApi.apiId,
+    apiEndpoint: backend.data.resources.graphqlApi.endpoint
+  }
+);
 
+// Add notification outputs to the backend
 backend.addOutput({
   custom: {
-    topicArn: customNotifications.topic.topicArn,
-    topicName: customNotifications.topic.topicName 
+    notifications: {
+      topic_arn: notificationSystem.topic.topicArn,
+      topic_name: notificationSystem.topic.topicName
+    }
   }
 });
