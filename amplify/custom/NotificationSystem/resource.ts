@@ -36,7 +36,7 @@ export class NotificationSystem extends Construct {
       environment: {
         TOPIC_ARN: this.topic.topicArn
       },
-      runtime: Runtime.NODEJS_18_X
+      runtime: Runtime.NODEJS_22_X
     });
 
     // Grant publish permissions to the lambda function
