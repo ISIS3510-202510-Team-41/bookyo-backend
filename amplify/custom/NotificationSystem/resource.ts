@@ -1,11 +1,17 @@
+// File: resource.ts - renamed to match imports in backend.ts
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { Construct } from 'constructs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LambdaSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Stack } from 'aws-cdk-lib/core';
+
+// Get the equivalent of __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export type NotificationSystemProps = {
   apiId: string;
@@ -21,9 +27,12 @@ export class NotificationSystem extends Construct {
     // Create an SNS topic
     this.topic = new Topic(this, 'NotificationTopic');
 
+    // Get the directory for Lambda functions
+    const lambdaDir = path.join(__dirname);
+    
     // Lambda function to publish messages to SNS
     const publisher = new NodejsFunction(this, 'Publisher', {
-      entry: path.join(__dirname, 'publisher.ts'),
+      entry: path.join(lambdaDir, 'publisher.ts'),
       environment: {
         TOPIC_ARN: this.topic.topicArn
       },
@@ -35,7 +44,7 @@ export class NotificationSystem extends Construct {
 
     // Lambda function to save notifications to DynamoDB via AppSync
     const notificationHandler = new NodejsFunction(this, 'NotificationHandler', {
-      entry: path.join(__dirname, 'notification-handler.ts'),
+      entry: path.join(lambdaDir, 'notification-handler.ts'),
       environment: {
         APPSYNC_API_URL: `https://${props.apiId}.appsync-api.${props.region}.amazonaws.com/graphql`,
         APPSYNC_API_KEY: `#{amplify:AppSync:${props.apiId}:ApiKey}`, // This syntax extracts value from Amplify output

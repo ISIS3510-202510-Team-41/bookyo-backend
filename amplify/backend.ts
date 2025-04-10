@@ -6,7 +6,6 @@ import { CfnApp } from "aws-cdk-lib/aws-pinpoint";
 import { Stack } from "aws-cdk-lib/core";
 import { CfnMap } from 'aws-cdk-lib/aws-location';
 import { storage } from './storage/resource';
-import { Construct } from 'constructs';
 import { NotificationSystem } from './custom/NotificationSystem/resource';
 
 const backend = defineBackend({
