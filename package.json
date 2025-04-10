@@ -22,7 +22,8 @@
     "constructs": "^10.4.2",
     "esbuild": "^0.25.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "uuid": "^11.1.0"
   },
   "dependencies": {
     "aws-amplify": "^6.13.3"
