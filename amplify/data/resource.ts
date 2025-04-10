@@ -147,7 +147,7 @@ const schema = a.schema({
     recipient: a.string().required(),
     read: a.boolean().required(),
     type: a.enum(["NEW_BOOK", "BOOK_SOLD", "SYSTEM_NOTIFICATION"]),
-  }).authorization(allow => [allow.authenticated().to(['read', 'delete'])]),
+  }).authorization(allow => [allow.authenticated().to(['read', 'create', 'delete'])]),
   Cart: a.model({
     id: a.id().required(),
     userId: a.string().required(),
