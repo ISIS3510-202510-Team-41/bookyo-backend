@@ -63,6 +63,9 @@ const createGraphQLClient = () => {
     throw new Error('Missing required environment variables: APPSYNC_API_URL and APPSYNC_API_KEY must be defined');
   }
 
+  // Log the API URL for debugging
+  console.log(`Using AppSync API URL: ${APPSYNC_API_URL}`);
+
   return new GraphQLClient(APPSYNC_API_URL, {
     headers: {
       'x-api-key': APPSYNC_API_KEY,

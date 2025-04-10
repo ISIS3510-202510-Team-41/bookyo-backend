@@ -107,7 +107,7 @@ const notificationSystem = new NotificationSystem(
   'NotificationSystem',
   {
     apiId: backend.data.resources.graphqlApi.apiId,
-    apiEndpoint: backend.data.resources.graphqlApi.endpoint
+    region: Stack.of(backend.data.resources.graphqlApi).region
   }
 );
 

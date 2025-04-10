@@ -7,17 +7,15 @@ import { LambdaSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Stack } from 'aws-cdk-lib/core';
 
-export type Message = {
-  title: string;
-  body: string;
-  recipient: string;
-  type: 'NEW_BOOK' | 'BOOK_SOLD' | 'SYSTEM_NOTIFICATION';
+export type NotificationSystemProps = {
+  apiId: string;
+  region: string;
 }
 
 export class NotificationSystem extends Construct {
   public readonly topic: Topic;
 
-  constructor(scope: Construct, id: string, props: { apiId: string, apiEndpoint: string }) {
+  constructor(scope: Construct, id: string, props: NotificationSystemProps) {
     super(scope, id);
   
     // Create an SNS topic
@@ -39,7 +37,7 @@ export class NotificationSystem extends Construct {
     const notificationHandler = new NodejsFunction(this, 'NotificationHandler', {
       entry: path.join(__dirname, 'notification-handler.ts'),
       environment: {
-        APPSYNC_API_URL: props.apiEndpoint,
+        APPSYNC_API_URL: `https://${props.apiId}.appsync-api.${props.region}.amazonaws.com/graphql`,
         APPSYNC_API_KEY: `#{amplify:AppSync:${props.apiId}:ApiKey}`, // This syntax extracts value from Amplify output
       },
       runtime: Runtime.NODEJS_18_X

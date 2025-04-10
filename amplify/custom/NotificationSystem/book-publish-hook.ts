@@ -48,6 +48,6 @@ export const notifyNewBook = async (bookId: string, title: string, authorName: s
     return { success: true };
   } catch (error) {
     console.error('Error sending book notification:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: (error as Error).message };
   }
 };
