@@ -63,6 +63,18 @@ export class NotificationService {
   }
 
   /**
+   * Send a new listing notification to all users
+   */
+  static async notifyNewListing(bookTitle: string, price: number, listingId: string) {
+    return NotificationService.broadcast({
+      title: 'New Book Listing',
+      body: `"${bookTitle}" is now available for $${price.toFixed(2)}!`,
+      type: 'NEW_BOOK', // Reusing the existing type since we don't have a NEW_LISTING type
+      metadata: { listingId }
+    });
+  }
+
+  /**
    * Base method to send a notification via Lambda invocation
    */
   private static async send(options: NotificationOptions) {

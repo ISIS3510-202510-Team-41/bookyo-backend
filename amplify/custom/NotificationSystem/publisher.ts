@@ -2,7 +2,7 @@ import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import type { Handler } from 'aws-lambda';
 
 // Define the types of notifications
-export type NotificationType = 'NEW_BOOK' | 'BOOK_SOLD' | 'SYSTEM_NOTIFICATION';
+export type NotificationType = 'NEW_BOOK' | 'BOOK_SOLD' | 'SYSTEM_NOTIFICATION' | 'NEW_LISTING';
 
 // Message format for notifications
 export type NotificationMessage = {
